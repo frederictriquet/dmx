@@ -1,0 +1,13 @@
+
+name: IrLED64
+can_rgb: true
+can_white: true
+can_amber: true
+can_uv: false
+
+class:
+  module_name: Fixtures.irled64
+  class_name: IrLED64
+
+channels:
+  nb: 6

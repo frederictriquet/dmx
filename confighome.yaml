@@ -1,30 +1,24 @@
 
 lights:
-  # - name: boomtone
-  #   channel: 1
-  #   fixture: Fixtures/boomtonepartypar123.yaml
-  # - name: bigpar
-  #   channel: 17
-  #   fixture: Fixtures/bigpar27rgbw.yaml
+  - name: boomtone
+    channel: 1
+    fixture: Fixtures/boomtonepartypar123.yaml
+  - name: bigpar
+    channel: 17
+    fixture: Fixtures/bigpar27rgbw.yaml
   - name: uv
     fixture: Fixtures/extraflatparcanuv.yaml
-    channel: 1
-  - name: irled
-    fixture: Fixtures/irled64.yaml
-    channel: 3
+    channel: 33
 
 ui:
   components:
   - group: all colors
     components:
-    - uv
-    - irled
-  #   - bigpar
-  #   - boomtone
-  # - light: bigpar
-  # - light: boomtone
+    - bigpar
+    - boomtone
+  - light: bigpar
+  - light: boomtone
   - light: uv
-  - light: irled
   sizes:
     text: 10
     dimmer_w: 40

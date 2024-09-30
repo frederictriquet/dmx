@@ -65,7 +65,7 @@ class FakeDmx:
             self.dmx_data[i] = bytes([0])
         
     def render(self):
-        print(' '.join(x.hex() for x in self.dmx_data[:self.chan_max]))
+        print(' '.join(x.hex() for x in self.dmx_data[1:self.chan_max+1]))
 
     def display_universe(self):
         while self.run:

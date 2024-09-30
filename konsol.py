@@ -13,7 +13,7 @@ fixtures = load_fixtures(config)
 try:
     dmx = Dmx('ftdi://ftdi:232:A50285BI/1') # note device serial in the connect string //usbserial-A50285BI
 except:
-    dmx = FakeDmx(34,1)
+    dmx = FakeDmx(8,1)
 
 
 physical_lights_and_groups = {
@@ -49,7 +49,7 @@ def auto_mode_tick(threshold, fade_time):
 
 
 auto_mode = False
-strobe_mode = False
+# strobe_mode = False
 while True:
     event, values = globalz.window.read()
     if event == sg.WIN_CLOSED or event == 'Quit':
@@ -61,6 +61,9 @@ while True:
     elif event.startswith('DIMMER_'):
         _,name = event.split('_')
         physical_lights_and_groups[name].set_dimmer(int(values[event]))
+    elif event.startswith('STROBE_'):
+        _,name = event.split('_')
+        physical_lights_and_groups[name].set_strobe(int(values[event]))
     elif event == '__TIMER EVENT__':
         if auto_mode:
             auto_mode_tick(values['AUTO_TIME'], values['FADE_TIME'])
@@ -72,10 +75,10 @@ while True:
         globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on red')
         if auto_mode:
             auto_mode_t0 = time.time()
-    elif event == 'STROBE':
-        strobe_mode = not strobe_mode
-        globalz.window['STROBE'].update(text="STROBE ON" if strobe_mode else "STROBE OFF")
-        globalz.window['STROBE'].update(button_color='white on green' if strobe_mode else 'white on red')
+    # elif event == 'STROBE':
+    #     strobe_mode = not strobe_mode
+    #     globalz.window['STROBE'].update(text="STROBE ON" if strobe_mode else "STROBE OFF")
+    #     globalz.window['STROBE'].update(button_color='white on green' if strobe_mode else 'white on red')
 
 
 dmx.blackout()

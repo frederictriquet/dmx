@@ -1,4 +1,8 @@
+LICENCE.txt
 .venv
 __pycache__
 .vscode
 .envrc
+DJ/
+Tests/
+Theater/

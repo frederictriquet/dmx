@@ -24,7 +24,10 @@ def build_color_buttons(name: str, colors: list, can_rgb: bool, can_white: bool,
         if (color['rgb'] and can_rgb) or (color['white'] and can_white) or (color['amber'] and can_amber):
             b = sg.Button(button_color=('black', c), mouseover_colors=c,
                 key=f'COLOR_{name}_{color["code"]}', size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=0)
-            buttons.append(b)
+        else:
+            b = sg.B(size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=0, disabled=True)
+        buttons.append(b)
+    buttons.append(sg.Slider(orientation='h', key=f'STROBE_{name}', enable_events=True, range=(0,255), resolution=1, default_value=0, size=(ui_sizes['dimmer_w'],ui_sizes['dimmer_h'])))
     return buttons
 
 def build_light_controls(item_name: str, light: dict, colors: list, ui_sizes: dict) -> list:

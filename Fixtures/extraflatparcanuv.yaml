@@ -6,6 +6,7 @@ can_amber: false
 can_uv: true
 
 channels:
+  nb: 2
   color:
     - dimmer
     - 0
