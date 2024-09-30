@@ -1,31 +1,35 @@
 import PySimpleGUI as sg
-from lib import load_config, load_fixtures, build_layout
+from lib import load_yaml, load_config, load_fixtures, build_layout, check_dmx_consistency
 from physical_light import PhysicalLight
 from group_of_lights import GroupOfLights
 from dmxlib import Dmx, FakeDmx
-import time, random
+import time, random, sys
 
 import globalz
-# from globalz import window
-config = load_config('config.yaml')
+conf = 'Conf/config.yaml' if len(sys.argv) == 1 else sys.argv[1]
+
+config = load_config(conf)
+ui = load_yaml('Conf/ui.yaml')
 fixtures = load_fixtures(config)
+
+check_dmx_consistency(config, fixtures)
 
 try:
     dmx = Dmx('ftdi://ftdi:232:A50285BI/1') # note device serial in the connect string //usbserial-A50285BI
 except:
-    dmx = FakeDmx(8,1)
+    dmx = FakeDmx(34,1)
 
 
 physical_lights_and_groups = {
     l['name']: PhysicalLight(l['name'], l['channel'], fixtures[l['name']], dmx) for l in config['lights']
 }
-for ui_item in config['ui']['components']:
+for ui_item in config['layout']['components']:
     if 'group' in ui_item:
         name = ui_item['group']
         physical_lights_and_groups[name] = GroupOfLights(name, ui_item['components'], physical_lights_and_groups)
 # print(physical_lights_and_groups)
 
-layout = build_layout(config, fixtures)
+layout = build_layout(config, fixtures, ui)
 
 globalz.window = sg.Window('Konsol', layout, resizable=True, finalize=True)
 timer_id = globalz.window.timer_start(1)
@@ -49,7 +53,6 @@ def auto_mode_tick(threshold, fade_time):
 
 
 auto_mode = False
-# strobe_mode = False
 while True:
     event, values = globalz.window.read()
     if event == sg.WIN_CLOSED or event == 'Quit':
@@ -66,7 +69,7 @@ while True:
         physical_lights_and_groups[name].set_strobe(int(values[event]))
     elif event == '__TIMER EVENT__':
         if auto_mode:
-            auto_mode_tick(values['AUTO_TIME'], values['FADE_TIME'])
+            auto_mode_tick(values['AUTO_TIME'], values['AUTO_FADE_TIME'])
         for l in physical_lights_and_groups.values():
             l.tick()
     elif event == 'AUTO':
@@ -75,10 +78,6 @@ while True:
         globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on red')
         if auto_mode:
             auto_mode_t0 = time.time()
-    # elif event == 'STROBE':
-    #     strobe_mode = not strobe_mode
-    #     globalz.window['STROBE'].update(text="STROBE ON" if strobe_mode else "STROBE OFF")
-    #     globalz.window['STROBE'].update(button_color='white on green' if strobe_mode else 'white on red')
 
 
 dmx.blackout()

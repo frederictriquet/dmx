@@ -18,7 +18,7 @@ def load_fixtures(config: dict) -> dict:
 
 def build_color_buttons(name: str, colors: list, can_rgb: bool, can_white: bool, can_amber: bool, ui_sizes: dict) -> list:
     buttons = []
-    buttons.append(sg.Slider(orientation='h', key=f'DIMMER_{name}', enable_events=True, range=(0,255), resolution=1, default_value=200, size=(ui_sizes['dimmer_w'],ui_sizes['dimmer_h'])))
+    buttons.append(sg.Slider(orientation='h', key=f'DIMMER_{name}', enable_events=True, range=(0,255), resolution=1, default_value=0, size=(ui_sizes['dimmer_w'],ui_sizes['dimmer_h'])))
     for color in colors:
         c = color['display']
         if (color['rgb'] and can_rgb) or (color['white'] and can_white) or (color['amber'] and can_amber):
@@ -58,27 +58,36 @@ def build_controls(ui_item, colors: list, fixtures: list, ui_sizes: dict) -> lis
 
     return controls
 
-def build_layout(config: dict, fixtures: dict) -> list:
+def build_layout(config: dict, fixtures: dict, ui: dict) -> list:
     layout = []
-    for ui_item in config['ui']['components']:
+    for ui_item in config['layout']['components']:
         row = []
-        controls = build_controls(ui_item, config['colors'], fixtures, config['ui']['sizes'])
+        controls = build_controls(ui_item, ui['colors'], fixtures, ui['sizes'])
         row.extend(controls)
         layout.append(row)
-    layout.append([sg.Text('Fade time', justification='right', size=config['ui']['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
+    layout.append([sg.Text('Fade time', justification='right', size=ui['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
     layout.append([sg.HorizontalSeparator(color='red')])
-    layout.append([sg.Text('Auto time', justification='right', size=config['ui']['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='AUTO_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
-    layout.append([sg.Text('Strobe speed', justification='right', size=config['ui']['sizes']['text']), sg.Slider(orientation='h', default_value=0, key='STROBE_SPEED', enable_events=True, range=(0,255), resolution=1, expand_x=True)])
+    layout.append([sg.Text('Auto time', justification='right', size=ui['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='AUTO_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
+    layout.append([sg.Text('Auto fade time', justification='right', size=ui['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='AUTO_FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
     layout.append(
         [
             sg.Button("AUTO OFF", button_color=('black', 'red'),
-                key='AUTO', size=(config['ui']['sizes']['button_w']*3,
-                config['ui']['sizes']['button_h']), pad=0),
-            sg.Button("STROBE OFF", button_color=('black', 'red'),
-                key='STROBE', size=(config['ui']['sizes']['button_w']*3,
-                config['ui']['sizes']['button_h']), pad=0)
+                key='AUTO', size=(ui['sizes']['big_button_w'],
+                ui['sizes']['big_button_h']), pad=0)
         ])
 
     layout.append([sg.HorizontalSeparator(color='red')])
     layout.append([sg.Button('Quit')])
     return layout
+
+
+def check_dmx_consistency(config: dict, fixtures: dict):
+    channels = [0]*512
+    for l in config['lights']:
+        nb = fixtures[l['name']]['channels']['nb']
+        for c in range(l['channel'], nb+1):
+            if c < 0 or c > 512:
+                raise IndexError(f'{l["name"]} has incorrect channel specification')
+            channels[c-1] += 1
+            if channels[c-1] > 1:
+                raise ValueError(f'{l["name"]} conflicts with previous fixture')

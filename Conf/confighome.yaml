@@ -1,0 +1,21 @@
+
+lights:
+  - name: boomtone
+    channel: 1
+    fixture: Fixtures/boomtonepartypar123.yaml
+  - name: bigpar
+    channel: 17
+    fixture: Fixtures/bigpar27rgbw.yaml
+  - name: uv
+    fixture: Fixtures/extraflatparcanuv.yaml
+    channel: 33
+
+layout:
+  components:
+  - group: all colors
+    components:
+    - bigpar
+    - boomtone
+  - light: bigpar
+  - light: boomtone
+  - light: uv
