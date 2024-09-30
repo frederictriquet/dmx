@@ -1,0 +1,15 @@
+
+name: ExtraFlatParCanUV
+can_rgb: false
+can_white: false
+can_amber: false
+can_uv: true
+
+channels:
+  color:
+    - dimmer
+    - 0
+  strobe:
+    - dimmer
+    - strobe
+

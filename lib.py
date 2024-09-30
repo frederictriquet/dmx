@@ -65,9 +65,14 @@ def build_layout(config: dict, fixtures: dict) -> list:
     layout.append([sg.Text('Fade time', justification='right', size=config['ui']['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
     layout.append([sg.HorizontalSeparator(color='red')])
     layout.append([sg.Text('Auto time', justification='right', size=config['ui']['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='AUTO_TIME', enable_events=True, range=(0,3.0), resolution=0.1, tick_interval=1.0, expand_x=True)])
+    layout.append([sg.Text('Strobe speed', justification='right', size=config['ui']['sizes']['text']), sg.Slider(orientation='h', default_value=0, key='STROBE_SPEED', enable_events=True, range=(0,255), resolution=1, expand_x=True)])
     layout.append(
-        [sg.Button("AUTO OFF", button_color=('black', 'red'),
+        [
+            sg.Button("AUTO OFF", button_color=('black', 'red'),
                 key='AUTO', size=(config['ui']['sizes']['button_w']*3,
+                config['ui']['sizes']['button_h']), pad=0),
+            sg.Button("STROBE OFF", button_color=('black', 'red'),
+                key='STROBE', size=(config['ui']['sizes']['button_w']*3,
                 config['ui']['sizes']['button_h']), pad=0)
         ])
 

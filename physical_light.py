@@ -39,10 +39,12 @@ class PhysicalLight:
             else:
                 delta = interval/self.fade_time
             self.current_color = tuple(int(self.previous_color[i]*(1.0-delta) + self.next_color[i]*delta) for i in range(0,5))
-        self.set_full()
+        self.set_full('color')
 
-    def set_full(self):
-        for index, c in enumerate(self.fixture['channels']):
+    def set_full(self, mode):
+        if mode != 'color' and mode != 'strobe':
+            return
+        for index, c in enumerate(self.fixture['channels'][mode]):
             if c == 'dimmer':
                 self.dmx.set_channel(self.channel+index, self.dimmer)
             elif c == 'red':

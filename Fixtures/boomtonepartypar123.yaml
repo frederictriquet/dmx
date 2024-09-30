@@ -1,0 +1,25 @@
+
+name: BoomtonePartyPar123
+can_rgb: true
+can_white: false
+can_amber: false
+can_uv: false
+
+channels:
+  color:
+  - 0
+  - 0
+  - 0
+  - dimmer
+  - red
+  - green
+  - blue
+  strobe:
+  - 201 #strobe mode
+  - 0
+  - strobe
+  - dimmer
+  - red
+  - green
+  - blue
+

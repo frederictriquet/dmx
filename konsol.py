@@ -49,6 +49,7 @@ def auto_mode_tick(threshold, fade_time):
 
 
 auto_mode = False
+strobe_mode = False
 while True:
     event, values = globalz.window.read()
     if event == sg.WIN_CLOSED or event == 'Quit':
@@ -71,6 +72,12 @@ while True:
         globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on red')
         if auto_mode:
             auto_mode_t0 = time.time()
+    elif event == 'STROBE':
+        strobe_mode = not strobe_mode
+        globalz.window['STROBE'].update(text="STROBE ON" if strobe_mode else "STROBE OFF")
+        globalz.window['STROBE'].update(button_color='white on green' if strobe_mode else 'white on red')
+
+
 dmx.blackout()
 dmx.stop()
 globalz.window.close()

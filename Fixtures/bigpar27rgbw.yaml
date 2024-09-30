@@ -1,0 +1,26 @@
+
+name: BigPar27RGBW
+can_rgb: true
+can_white: true
+can_amber: false
+can_uv: false
+
+channels:
+  color:
+  - dimmer
+  - red
+  - green
+  - blue
+  - white
+  - 0
+  - 0
+  - 0
+  strobe:
+  - dimmer
+  - red
+  - green
+  - blue
+  - white
+  - strobe
+  - 0
+  - 0
