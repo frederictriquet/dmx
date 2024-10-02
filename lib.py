@@ -65,7 +65,10 @@ def build_layout(config: dict, fixtures: dict, ui: dict) -> list:
         controls = build_controls(ui_item, ui['colors'], fixtures, ui['sizes'])
         row.extend(controls)
         layout.append(row)
-    layout.append([sg.Text('Fade time', justification='right', size=ui['sizes']['text']), sg.Slider(orientation='h', default_value=1.0, key='FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.01, tick_interval=1.0, expand_x=True)])
+    layout.append([
+        sg.Text('Fade time', justification='right', size=ui['sizes']['text']),
+        sg.Slider(orientation='h', default_value=1.0, key='FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.01, tick_interval=1.0, expand_x=True)
+    ])
     layout.append([sg.HorizontalSeparator(color='red')])
 
     layout.append(
