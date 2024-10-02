@@ -22,10 +22,11 @@ def build_color_buttons(name: str, colors: list, can_rgb: bool, can_white: bool,
     for color in colors:
         c = color['display']
         if (color['rgb'] and can_rgb) or (color['white'] and can_white) or (color['amber'] and can_amber):
-            b = sg.Button(button_color=('black', c), mouseover_colors=c,
-                key=f'COLOR_{name}_{color["code"]}', size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=0)
+            tooltip = color['label'] if 'label' in color else ''
+            b = sg.Button(button_color=('black', c), mouseover_colors=c, tooltip=tooltip,
+                key=f'COLOR_{name}_{color["code"]}', size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=((0,0),(0,1)), border_width=0)
         else:
-            b = sg.B(size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=0, disabled=True)
+            b = sg.B(size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=((0,0),(0,1)), border_width=0, disabled=True)
         buttons.append(b)
     buttons.append(sg.Slider(orientation='h', key=f'STROBE_{name}', enable_events=True, range=(0,255), resolution=1, default_value=0, size=(ui_sizes['dimmer_w'],ui_sizes['dimmer_h'])))
     return buttons
@@ -69,7 +70,7 @@ def build_layout(config: dict, fixtures: dict, ui: dict) -> list:
         sg.Text('Fade time', justification='right', size=ui['sizes']['text']),
         sg.Slider(orientation='h', default_value=1.0, key='FADE_TIME', enable_events=True, range=(0,3.0), resolution=0.01, tick_interval=1.0, expand_x=True)
     ])
-    layout.append([sg.HorizontalSeparator(color='red')])
+    layout.append([sg.HorizontalSeparator(color='#508080')])
 
     layout.append(
         [
@@ -86,7 +87,7 @@ def build_layout(config: dict, fixtures: dict, ui: dict) -> list:
             sg.Col(
                 [
                     [
-                        sg.Button("AUTO OFF", button_color=('black', 'red'),
+                        sg.Button("AUTO OFF", button_color=('white on grey'),
                             key='AUTO', size=(ui['sizes']['big_button_w'],
                             ui['sizes']['big_button_h']), pad=0)
 
@@ -96,7 +97,7 @@ def build_layout(config: dict, fixtures: dict, ui: dict) -> list:
         ]
     )
 
-    layout.append([sg.HorizontalSeparator(color='red')])
+    layout.append([sg.HorizontalSeparator(color='#508080')])
     layout.append([sg.Button('Quit')])
     return layout
 

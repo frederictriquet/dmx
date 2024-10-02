@@ -14,58 +14,69 @@ colors: # RGBWA
     rgb: true
     white: false
     amber: false
+    label: white
   - code: '0000000000'
     display: '#000000'
     rgb: true
     white: true
     amber: true
-
-  - code: 'ffd0a00000'
-    display: '#ffd0a0'
-    rgb: true
-    white: false
-    amber: false
-  - code: 'd0a0ff0000'
-    display: '#d0a0ff'
-    rgb: true
-    white: false
-    amber: false
-  - code: 'a0ffd00000'
-    display: '#a0ffd0'
-    rgb: true
-    white: false
-    amber: false
+    label: black
 
   - code: 'ff00000000'
     display: '#ff0000'
     rgb: true
     white: false
     amber: false
-  - code: 'ff00ff0000'
-    display: '#ff00ff'
+    label: red
+  - code: 'ff8c000000'
+    display: '#FF8C00'
     rgb: true
     white: false
     amber: false
-  - code: '0000ff0000'
-    display: '#0000ff'
-    rgb: true
-    white: false
-    amber: false
-  - code: '00ffff0000'
-    display: '#00ffff'
-    rgb: true
-    white: false
-    amber: false
-  - code: '00ff000000'
-    display: '#00ff00'
-    rgb: true
-    white: false
-    amber: false
+    label: orange
   - code: 'ffff000000'
     display: '#ffff00'
     rgb: true
     white: false
     amber: false
+    label: yellow
+
+  - code: '0000ff0000'
+    display: '#0000ff'
+    rgb: true
+    white: false
+    amber: false
+    label: blue
+  - code: 'ff00ff0000'
+    display: '#ff00ff'
+    rgb: true
+    white: false
+    amber: false
+    label: purple
+  - code: '00ffff0000'
+    display: '#00ffff'
+    rgb: true
+    white: false
+    amber: false
+    label: cyan
+  - code: '00ff000000'
+    display: '#00ff00'
+    rgb: true
+    white: false
+    amber: false
+    label: green
+  # - code: 'd0a0ff0000'
+  #   display: '#d0a0ff'
+  #   rgb: true
+  #   white: false
+  #   amber: false
+
+  # - code: 'a0ffd00000'
+  #   display: '#a0ffd0'
+  #   rgb: true
+  #   white: false
+  #   amber: false
+
 
 
 
@@ -74,11 +85,11 @@ colors: # RGBWA
     rgb: false
     white: true
     amber: false
-    label: 'VRAI BLANC'
+    label: true white
   - code: '00000000ff'
     display: '#ffbf00'
     rgb: false
     white: false
     amber: true
-    label: 'AMBRE'
+    label: amber
 

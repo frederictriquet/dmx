@@ -76,7 +76,7 @@ while True:
     elif event == 'AUTO':
         auto_mode = not auto_mode
         globalz.window['AUTO'].update(text="AUTO ON" if auto_mode else "AUTO OFF")
-        globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on red')
+        globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on grey')
         if auto_mode:
             auto_mode_t0 = time.time()
             for l in physical_lights_and_groups.values():
