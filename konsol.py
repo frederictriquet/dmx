@@ -61,6 +61,7 @@ while True:
     if event.startswith('COLOR_'):
         _,name,color_code = event.split('_')
         physical_lights_and_groups[name].set_next_color(color_code, values['FADE_TIME'])
+        physical_lights_and_groups[name].set_dimmer(int(values[f'DIMMER_{name}']))
     elif event.startswith('DIMMER_'):
         _,name = event.split('_')
         physical_lights_and_groups[name].set_dimmer(int(values[event]))
@@ -78,6 +79,8 @@ while True:
         globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on red')
         if auto_mode:
             auto_mode_t0 = time.time()
+            for l in physical_lights_and_groups.values():
+                l.set_dimmer(int(values[f'DIMMER_{l.name}']))
 
 
 dmx.blackout()
