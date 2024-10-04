@@ -1,88 +1,69 @@
-import PySimpleGUI as sg
-from lib import load_yaml, load_config, load_fixtures, build_layout, check_dmx_consistency
-from physical_light import PhysicalLight
-from group_of_lights import GroupOfLights
-from dmxlib import Dmx, FakeDmx
-import time, random, sys
 
-import globalz
-conf = 'Conf/config.yaml' if len(sys.argv) == 1 else sys.argv[1]
+from PyQt6 import QtWidgets, QtCore, QtGui
 
-config = load_config(conf)
-ui = load_yaml('Conf/ui.yaml')
-fixtures = load_fixtures(config)
+class Konsol(QtWidgets.QMainWindow):
+    def __init__(self, config, fixtures, ui, app: QtWidgets.QApplication):
+        self.config = config
+        self.fixtures = fixtures
+        self.ui = ui
+        self.app = app
 
-check_dmx_consistency(config, fixtures)
+        QtWidgets.QMainWindow.__init__(self, None)
+        self.setWindowTitle("Konsol")
+        self.init_create_ui()
 
-try:
-    dmx = Dmx('ftdi://ftdi:232:A50285BI/1') # note device serial in the connect string //usbserial-A50285BI
-except:
-    dmx = FakeDmx(34,1)
+    def init_create_ui(self):
+        self.widget = QtWidgets.QWidget(self)
+        self.setCentralWidget(self.widget)
+        self.hboxes = []
+        self.vbox = QtWidgets.QVBoxLayout()
+        for ui_item in self.config['layout']['components']:
+            self.build_controls(ui_item)
 
+        self.widget.setLayout(self.vbox)
 
-physical_lights_and_groups = {
-    l['name']: PhysicalLight(l['name'], l['channel'], fixtures[l['name']], dmx) for l in config['lights']
-}
-for ui_item in config['layout']['components']:
-    if 'group' in ui_item:
-        name = ui_item['group']
-        physical_lights_and_groups[name] = GroupOfLights(name, ui_item['components'], physical_lights_and_groups)
-# print(physical_lights_and_groups)
+    
+    def build_controls(self, ui_item):
+        if 'light' in ui_item:
+            item_name = ui_item['light']
+            light = self.fixtures[item_name]
+            self.build_light_controls(item_name, light)
+        elif 'group' in ui_item:
+            self.build_group_controls(ui_item)
+        else:
+            raise ValueError('conf error')
 
-layout = build_layout(config, fixtures, ui)
+    def build_light_controls(self, item_name, light):
+        hbox = QtWidgets.QHBoxLayout()
 
-globalz.window = sg.Window('Konsol', layout, resizable=True, finalize=True)
-timer_id = globalz.window.timer_start(1)
+        hbox.addWidget(QtWidgets.QLabel(item_name))
 
-auto_mode_t0 = None
+        self.vbox.addLayout(hbox)
 
-def auto_mode_tick(threshold, fade_time):
-    global auto_mode_t0
-    if auto_mode_t0:
-        interval = time.time() - auto_mode_t0
-        if interval >= threshold:
-            auto_mode_t0 = time.time()
-            for l in physical_lights_and_groups.values():
-                if isinstance(l, PhysicalLight) and l.fixture['can_rgb']:
-                    red=random.randint(0,255)
-                    green=random.randint(0,255)
-                    blue=random.randint(0,255)
-                    color_code = f'{red:02x}{green:02x}{blue:02x}0000'
-                    l.set_next_color(color_code, fade_time)
+    def build_group_controls(self, ui_item):
+        controls = []
+        # controls.append(sg.Text(group['group'], justification='right', size=ui_sizes['text']))
 
+        # can_rgb = all([fixtures[c]['can_rgb'] for c in group['components']])
+        # can_white = all([fixtures[c]['can_white'] for c in group['components']])
+        # can_amber = all([fixtures[c]['can_amber'] for c in group['components']])
+        # controls.extend(build_color_buttons(group["group"], colors, can_rgb, can_white, can_amber, ui_sizes))
 
+    def build_color_buttons(name: str, colors: list, can_rgb: bool, can_white: bool, can_amber: bool, ui_sizes: dict) -> list:
+        buttons = []
+        # buttons.append(sg.Slider(orientation='h', key=f'DIMMER_{name}', enable_events=True, range=(0,255), resolution=1, default_value=255, size=(ui_sizes['dimmer_w'],ui_sizes['dimmer_h'])))
+        # for color in colors:
+        #     c = color['display']
+        #     if (color['rgb'] and can_rgb) or (color['white'] and can_white) or (color['amber'] and can_amber):
+        #         tooltip = color['label'] if 'label' in color else ''
+        #         b = sg.Button(button_color=('black', c), mouseover_colors=c, tooltip=tooltip,
+        #             key=f'COLOR_{name}_{color["code"]}', size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=((0,0),(0,1)), border_width=0)
+        #     else:
+        #         b = sg.B(size=(ui_sizes['button_w'], ui_sizes['button_h']), pad=((0,0),(0,1)), border_width=0, disabled=True)
+        #     buttons.append(b)
+        # buttons.append(sg.Slider(orientation='h', key=f'STROBE_{name}', enable_events=True, range=(0,255), resolution=1, default_value=0, size=(ui_sizes['dimmer_w'],ui_sizes['dimmer_h'])))
 
-auto_mode = False
-while True:
-    event, values = globalz.window.read()
-    if event == sg.WIN_CLOSED or event == 'Quit':
-        break
-    # print(event)
-    if event.startswith('COLOR_'):
-        _,name,color_code = event.split('_')
-        physical_lights_and_groups[name].set_next_color(color_code, values['FADE_TIME'])
-        physical_lights_and_groups[name].set_dimmer(int(values[f'DIMMER_{name}']))
-    elif event.startswith('DIMMER_'):
-        _,name = event.split('_')
-        physical_lights_and_groups[name].set_dimmer(int(values[event]))
-    elif event.startswith('STROBE_'):
-        _,name = event.split('_')
-        physical_lights_and_groups[name].set_strobe(int(values[event]))
-    elif event == '__TIMER EVENT__':
-        if auto_mode:
-            auto_mode_tick(values['AUTO_TIME'], values['AUTO_FADE_TIME'])
-        for l in physical_lights_and_groups.values():
-            l.tick()
-    elif event == 'AUTO':
-        auto_mode = not auto_mode
-        globalz.window['AUTO'].update(text="AUTO ON" if auto_mode else "AUTO OFF")
-        globalz.window['AUTO'].update(button_color='white on green' if auto_mode else 'white on grey')
-        if auto_mode:
-            auto_mode_t0 = time.time()
-            for l in physical_lights_and_groups.values():
-                l.set_dimmer(int(values[f'DIMMER_{l.name}']))
-
-
-dmx.blackout()
-dmx.stop()
-globalz.window.close()
+        # self.timer = QtCore.QTimer(self)
+        # self.timer.setInterval(100)
+        # self.timer.timeout.connect(self.dmx_timer)
+        # self.timer.stop()

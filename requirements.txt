@@ -1,3 +1,5 @@
-pysimplegui
+pyqt6-qt6==6.6.0
+pyqt6==6.6.0
+#pysimplegui
 pyftdi
 pyyaml
