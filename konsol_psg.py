@@ -3,7 +3,7 @@ from lib_psg import load_yaml, load_config, load_fixtures, build_layout, check_d
 from physical_light import PhysicalLight
 from group_of_lights import GroupOfLights
 from dmxlib import Dmx, FakeDmx
-import time, random, sys
+import time, random, sys, os
 
 import globalz
 conf = 'Conf/config.yaml' if len(sys.argv) == 1 else sys.argv[1]
@@ -15,7 +15,7 @@ fixtures = load_fixtures(config)
 check_dmx_consistency(config, fixtures)
 
 try:
-    dmx = Dmx('ftdi://ftdi:232:A50285BI/1') # note device serial in the connect string //usbserial-A50285BI
+    dmx = Dmx(os.environ['SERIAL_PORT']) # note device serial in the connect string //usbserial-A50285BI
 except:
     dmx = FakeDmx(34,1)
 
