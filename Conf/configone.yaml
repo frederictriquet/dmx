@@ -1,0 +1,9 @@
+
+lights:
+  - name: boomtone
+    channel: 1
+    fixture: Fixtures/boomtonepartypar123.yaml
+
+layout:
+  components:
+  - light: boomtone

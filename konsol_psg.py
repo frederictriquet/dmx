@@ -3,9 +3,10 @@ from lib_psg import load_yaml, load_config, load_fixtures, build_layout, check_d
 from physical_light import PhysicalLight
 from group_of_lights import GroupOfLights
 from dmxlib import Dmx, FakeDmx
-import time, random, sys, os
-
+import time, random, sys, os, threading
+from infinite_timer import InfiniteTimer
 import globalz
+
 conf = 'Conf/config.yaml' if len(sys.argv) == 1 else sys.argv[1]
 
 config = load_config(conf)
@@ -32,12 +33,12 @@ for ui_item in config['layout']['components']:
 layout = build_layout(config, fixtures, ui)
 
 globalz.window = sg.Window('Konsol', layout, resizable=True, finalize=True)
-timer_id = globalz.window.timer_start(1)
+# timer_id = globalz.window.timer_start(500)
 
 auto_mode_t0 = None
 
 def auto_mode_tick(threshold, fade_time):
-    global auto_mode_t0
+    global auto_mode_t0, physical_lights_and_groups
     if auto_mode_t0:
         interval = time.time() - auto_mode_t0
         if interval >= threshold:
@@ -50,7 +51,17 @@ def auto_mode_tick(threshold, fade_time):
                     color_code = f'{red:02x}{green:02x}{blue:02x}0000'
                     l.set_next_color(color_code, fade_time)
 
+def global_tick():
+    global auto_mode, physical_lights_and_groups
+    if auto_mode:
+        auto_mode_tick(values['AUTO_TIME'], values['AUTO_FADE_TIME'])
+    for l in physical_lights_and_groups.values():
+        print('.', end='', flush=True)
+        l.tick()
 
+
+timer_thread = InfiniteTimer(0.050, global_tick)
+timer_thread.start()
 
 auto_mode = False
 while True:
@@ -68,11 +79,8 @@ while True:
     elif event.startswith('STROBE_'):
         _,name = event.split('_')
         physical_lights_and_groups[name].set_strobe(int(values[event]))
-    elif event == '__TIMER EVENT__':
-        if auto_mode:
-            auto_mode_tick(values['AUTO_TIME'], values['AUTO_FADE_TIME'])
-        for l in physical_lights_and_groups.values():
-            l.tick()
+    # elif event == '__TIMER EVENT__':
+    #     global_tick()
     elif event == 'AUTO':
         auto_mode = not auto_mode
         globalz.window['AUTO'].update(text="AUTO ON" if auto_mode else "AUTO OFF")
@@ -82,7 +90,7 @@ while True:
             for l in physical_lights_and_groups.values():
                 l.set_dimmer(int(values[f'DIMMER_{l.name}']))
 
-
+timer_thread.cancel()
 dmx.blackout()
 dmx.stop()
 globalz.window.close()
