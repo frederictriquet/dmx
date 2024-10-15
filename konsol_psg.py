@@ -56,7 +56,7 @@ def global_tick():
     if auto_mode:
         auto_mode_tick(values['AUTO_TIME'], values['AUTO_FADE_TIME'])
     for l in physical_lights_and_groups.values():
-        print('.', end='', flush=True)
+        # print('.', end='', flush=True)
         l.tick()
 
 

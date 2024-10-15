@@ -1,0 +1,9 @@
+
+lights:
+  - name: compar
+    channel: 10
+    fixture: Fixtures/compar.yaml
+
+layout:
+  components:
+  - light: compar

@@ -1,0 +1,27 @@
+
+name: compar
+can_rgb: true
+can_white: true
+can_amber: true
+can_uv: false
+
+channels:
+  nb: 8
+  color:
+  - dimmer
+  - 0
+  - red
+  - green
+  - blue
+  - white
+  - amber
+  - 0
+  strobe:
+  - dimmer
+  - strobe
+  - red
+  - green
+  - blue
+  - white
+  - amber
+  - 0

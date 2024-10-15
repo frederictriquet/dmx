@@ -1,0 +1,29 @@
+
+lights:
+  - name: rue jardin
+    channel: 10
+    fixture: Fixtures/compar.yaml
+  - name: face jardin
+    channel: 20
+    fixture: Fixtures/compar.yaml
+  - name: douche jardin
+    channel: 30
+    fixture: Fixtures/compar.yaml
+  - name: douche cour
+    channel: 40
+    fixture: Fixtures/compar.yaml
+  - name: face cour
+    channel: 50
+    fixture: Fixtures/compar.yaml
+  - name: rue cour
+    channel: 60
+    fixture: Fixtures/compar.yaml
+
+layout:
+  components:
+  - light: rue jardin
+  - light: face jardin
+  - light: douche jardin
+  - light: douche cour
+  - light: face cour
+  - light: rue cour
