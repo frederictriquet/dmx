@@ -16,12 +16,12 @@ class GroupOfLights:
     def set_dimmer(self, dimmer: int):
         for c in self.components:
             c.set_dimmer(dimmer)
-            globalz.window[f'DIMMER_{c.name}'].update(value=dimmer)
+            # globalz.window[f'DIMMER_{c.name}'].update(value=dimmer)
 
     def set_strobe(self, strobe: int):
         for c in self.components:
             c.set_strobe(strobe)
-            globalz.window[f'STROBE_{c.name}'].update(value=strobe)
+            # globalz.window[f'STROBE_{c.name}'].update(value=strobe)
 
 
     def tick(self):

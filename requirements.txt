@@ -3,3 +3,7 @@ pyqt6==6.6.0
 #pysimplegui
 pyftdi
 pyyaml
+
+
+python-rtmidi
+mido

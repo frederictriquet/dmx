@@ -34,6 +34,8 @@ class Dmx:
         sdata = b''.join(self.dmx_data)
         self.serial.send_break(duration=0.001)
         self.serial.write(sdata)
+        print(' '.join(x.hex() for x in self.dmx_data[10:20]))
+
 
     def display_universe(self):
         while self.run:

@@ -21,6 +21,14 @@ lights:
 
 layout:
   components:
+  - group: all colors
+    components:
+    - rue jardin
+    - face jardin
+    - douche jardin
+    - douche cour
+    - face cour
+    - rue cour
   - light: rue jardin
   - light: face jardin
   - light: douche jardin
